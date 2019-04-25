@@ -1,0 +1,5 @@
+runtime: go111
+
+handlers:
+  - url: /api/v1/automatic
+    script: auto

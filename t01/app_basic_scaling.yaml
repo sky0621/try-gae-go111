@@ -1,0 +1,10 @@
+runtime: go111
+
+service: basic-service
+
+handlers:
+  - url: /api/v1/basic
+    script: auto
+
+basic_scaling:
+  max_instances: 25
