@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"net/http"
 	"os"
 
 	"github.com/labstack/echo"
@@ -10,6 +11,9 @@ import (
 func main() {
 	e := echo.New()
 
-	// Google App Engineではデプロイ時にポートが決まり、環境変数「PORT」に接続ポートがセットされる。
+	e.GET("/", func(c echo.Context) error {
+		return c.JSON(http.StatusOK, "OK")
+	})
+
 	e.Logger.Fatal(e.Start(fmt.Sprintf(":%s", os.Getenv("PORT"))))
 }
