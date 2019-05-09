@@ -12,6 +12,9 @@ func main() {
 	e := echo.New()
 
 	e.GET("/", func(c echo.Context) error {
+		if c.Request().Header.Get("API-KEY") != "3a193b40-9691-4f4f-841a-4417ff15e110" {
+			return c.JSON(http.StatusForbidden, nil)
+		}
 		return c.JSON(http.StatusOK, "OK")
 	})
 
