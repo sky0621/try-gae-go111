@@ -1,2 +1,1 @@
 GET http://localhost:8080/
-API-KEY: 3a193b40-9691-4f4f-841a-4417ff15e110
