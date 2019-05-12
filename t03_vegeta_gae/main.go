@@ -72,6 +72,8 @@ func connectDB(isLocal bool) (*gorm.DB, closeDB, error) {
 		return nil, nil, err
 	}
 
+	db.DB().SetMaxIdleConns(10000)
+
 	return db, closeDBFunc, nil
 }
 
