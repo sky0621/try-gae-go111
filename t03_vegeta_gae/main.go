@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/jinzhu/gorm"
 
@@ -80,15 +81,26 @@ func connectDB(isLocal bool) (*gorm.DB, closeDB, error) {
 func routing(e *echo.Echo, db *gorm.DB) {
 	// ユーザー登録
 	e.POST("/users", func(c echo.Context) error {
+		start := time.Now()
+		fmt.Printf("[START] %v\n", start)
+
 		id := uuid.New().String()
 		u := &User{
 			ID:   id,
 			Name: fmt.Sprintf("ユーザー%s", id),
 			Mail: fmt.Sprintf("mail-%s@example.com", id),
 		}
+
+		dbSave := time.Now()
+		fmt.Printf("[from start to db.Save] %v\n", dbSave.Sub(start))
 		if err := db.Save(u).Error; err != nil {
 			return c.JSON(http.StatusInternalServerError, http.StatusText(http.StatusInternalServerError))
 		}
+
+		fmt.Printf("[from db.Save to end] %v\n", time.Now().Sub(dbSave))
+		fmt.Printf("[from start to end] %v\n", time.Now().Sub(start))
+
+		fmt.Printf("[ END ] %v\n", time.Now())
 		return c.JSON(http.StatusOK, "OK")
 	})
 
