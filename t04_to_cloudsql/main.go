@@ -14,27 +14,24 @@ import (
 )
 
 func main() {
-	var (
-		connectionName = os.Getenv("CLOUDSQL_CONNECTION_NAME")
-		user           = os.Getenv("CLOUDSQL_USER")
-		password       = os.Getenv("CLOUDSQL_PASSWORD")
-		database       = os.Getenv("CLOUDSQL_DATABASE")
-	)
-	db, err := gorm.Open("mysql", fmt.Sprintf("%s:%s@unix(/cloudsql/%s)/%s?parseTime=True", user, password, connectionName, database))
+	db, err := gorm.Open("mysql",
+		fmt.Sprintf("root:%s@unix(/cloudsql/%s)/fs14db01?parseTime=True",
+			os.Getenv("PASS"), os.Getenv("CONN")))
 	if err != nil {
 		panic(err)
 	}
-	defer db.Close()
-	db.LogMode(true)
+	defer func() {
+		if err := db.Close(); err != nil {
+			panic(err)
+		}
+	}()
 
 	e := echo.New()
 	e.POST("/users", func(c echo.Context) error {
-
-		e.Logger.Fatal(e.Start(fmt.Sprintf(":%s", os.Getenv("PORT"))))
 		id := uuid.New().String()
 		u := &User{
 			ID:   id,
-			Name: fmt.Sprintf("ユーザー%s", id),
+			Name: fmt.Sprintf("user-%s", id),
 			Mail: fmt.Sprintf("mail-%s@example.com", id),
 		}
 		if err := db.Save(u).Error; err != nil {
@@ -42,6 +39,7 @@ func main() {
 		}
 		return c.JSON(http.StatusOK, "OK")
 	})
+	e.Logger.Fatal(e.Start(fmt.Sprintf(":%s", os.Getenv("PORT"))))
 }
 
 type User struct {
