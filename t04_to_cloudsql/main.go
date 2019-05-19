@@ -25,9 +25,14 @@ func main() {
 			panic(err)
 		}
 	}()
+	// --------------------------------------------------------------
+	// pattern 01. MaxIdleConns=0, MaxOpenConns=0
+	db.DB().SetMaxIdleConns(0)
+	db.DB().SetMaxOpenConns(0)
+	// --------------------------------------------------------------
 
 	e := echo.New()
-	e.POST("/users", func(c echo.Context) error {
+	e.POST("/user", func(c echo.Context) error {
 		id := uuid.New().String()
 		u := &User{
 			ID:   id,
