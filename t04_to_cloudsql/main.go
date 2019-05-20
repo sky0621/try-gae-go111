@@ -26,17 +26,29 @@ func main() {
 		}
 	}()
 	// --------------------------------------------------------------
-	// Pattern 1. Unlimited-open.
+	// Pattern 1
 	//db.DB().SetMaxIdleConns(0)
 	//db.DB().SetMaxOpenConns(0)
 
-	// Pattern 2. < AppEngineInstance to CloudSQLInstance open.
+	// Pattern 2
 	//db.DB().SetMaxIdleConns(0)
 	//db.DB().SetMaxOpenConns(95)
 
-	// Pattern 3. > AppEngineInstance to CloudSQLInstance open.
+	// Pattern 3
 	//db.DB().SetMaxIdleConns(0)
 	//db.DB().SetMaxOpenConns(200)
+
+	// Pattern 4
+	//db.DB().SetMaxIdleConns(95)
+	//db.DB().SetMaxOpenConns(95)
+
+	// Pattern 5
+	//db.DB().SetMaxIdleConns(200)
+	//db.DB().SetMaxOpenConns(200)
+
+	// Pattern 5
+	//db.DB().SetMaxIdleConns(1000)
+	//db.DB().SetMaxOpenConns(1000)
 	// --------------------------------------------------------------
 
 	e := echo.New()
