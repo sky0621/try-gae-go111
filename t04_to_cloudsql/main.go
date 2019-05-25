@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/jinzhu/gorm"
 
@@ -27,8 +28,8 @@ func main() {
 	}()
 	// --------------------------------------------------------------
 	// Pattern 1
-	//db.DB().SetMaxIdleConns(0)
-	//db.DB().SetMaxOpenConns(0)
+	db.DB().SetMaxIdleConns(0)
+	db.DB().SetMaxOpenConns(0)
 
 	// Pattern 2
 	//db.DB().SetMaxIdleConns(0)
@@ -62,6 +63,10 @@ func main() {
 		if err := db.Save(u).Error; err != nil {
 			return c.JSON(http.StatusInternalServerError, http.StatusText(http.StatusInternalServerError))
 		}
+		fmt.Println(time.Now())
+		db.Raw("SELECT sleep(3)")
+		fmt.Println(time.Now())
+
 		return c.JSON(http.StatusOK, "OK")
 	})
 	e.Logger.Fatal(e.Start(fmt.Sprintf(":%s", os.Getenv("PORT"))))
