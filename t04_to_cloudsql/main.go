@@ -30,29 +30,32 @@ func main() {
 	// Pattern 1
 	db.DB().SetMaxIdleConns(0)
 	db.DB().SetMaxOpenConns(0)
-
 	// Pattern 2
 	//db.DB().SetMaxIdleConns(0)
 	//db.DB().SetMaxOpenConns(95)
-
 	// Pattern 3
-	//db.DB().SetMaxIdleConns(0)
-	//db.DB().SetMaxOpenConns(200)
-
-	// Pattern 4
 	//db.DB().SetMaxIdleConns(95)
 	//db.DB().SetMaxOpenConns(95)
-
-	// Pattern 5
-	//db.DB().SetMaxIdleConns(200)
-	//db.DB().SetMaxOpenConns(200)
-
-	// Pattern 5
-	//db.DB().SetMaxIdleConns(1000)
-	//db.DB().SetMaxOpenConns(1000)
 	// --------------------------------------------------------------
 
 	e := echo.New()
+	e.GET("sleep/:s", func(c echo.Context) error {
+		fmt.Printf("before: %v", time.Now())
+		s := c.Param("s")
+		rows, err := db.Raw("SELECT sleep(?)", s).Rows()
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, http.StatusText(http.StatusInternalServerError))
+		}
+		defer func() {
+			if err := rows.Close(); err != nil {
+				fmt.Println(err)
+			}
+		}()
+		fmt.Printf("after: %v", time.Now())
+
+		return c.JSON(http.StatusOK, "OK")
+	})
+
 	e.POST("/user", func(c echo.Context) error {
 		id := uuid.New().String()
 		u := &User{
@@ -63,12 +66,10 @@ func main() {
 		if err := db.Save(u).Error; err != nil {
 			return c.JSON(http.StatusInternalServerError, http.StatusText(http.StatusInternalServerError))
 		}
-		fmt.Println(time.Now())
-		db.Raw("SELECT sleep(3)")
-		fmt.Println(time.Now())
 
 		return c.JSON(http.StatusOK, "OK")
 	})
+
 	e.Logger.Fatal(e.Start(fmt.Sprintf(":%s", os.Getenv("PORT"))))
 }
 
